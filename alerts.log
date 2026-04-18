@@ -1,0 +1,2 @@
+with open("alerts.log", "a") as f:
+    f.write(f"Port scan detected from {ip}\n")
