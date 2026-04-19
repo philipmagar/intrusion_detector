@@ -1,4 +1,4 @@
-# 🛡️Intrusion Detection System (IDS)
+# ntrusion Detection System (IDS)
 
 ##  Overview
 
@@ -9,18 +9,23 @@ It monitors real-time network traffic and detects suspicious activities such as 
 
 ##  Features (Completed So Far)
 
-### ✅ Day 1: Packet Sniffer
+### Day 1: Packet Sniffer
 
-* Captures live network traffic using Scapy
-* Displays packet summaries in real-time
-* Works at network level (IP + TCP packets)
+- Captures live network traffic using Scapy
+- Displays packet summaries in real-time
+- Works at network level (IP + TCP packets)
 
-### ✅ Day 2: Port Scan Detection
+### Day 2: Port Scan Detection
 
-* Tracks activity of each IP address
-* Detects abnormal behavior (multiple requests in short time)
-* Raises alert for possible port scanning
-* Logs suspicious activity to a file (`alerts.log`)
+- Tracks activity of each IP address
+- Detects abnormal behavior (multiple requests in short time)
+- Raises alert for possible port scanning
+- Logs suspicious activity to a file (`alerts.log`)
+
+### Day 3: Brute-Force Attack Detection
+- Monitors repeated connection attempts from same IP
+- Detects abnormal connection frequency
+- Flags potential brute-force behavior
 
 ---
 
