@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IDS Dashboard</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+        }
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid white;
+            padding: 10px;
+        }
+        th {
+            background: #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🚨 Intrusion Detection Dashboard</h1>
+
+<table>
+    <tr>
+        <th>IP</th>
+        <th>Attack Type</th>
+        <th>Time</th>
+    </tr>
+
+    {% for alert in alerts %}
+    <tr>
+        <td>{{ alert.ip }}</td>
+        <td>{{ alert.type }}</td>
+        <td>{{ alert.time }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
