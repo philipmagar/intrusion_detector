@@ -29,39 +29,36 @@ It monitors network traffic, detects suspicious activities such as port scanning
 - Flags potential brute-force behavior
 - Logs alerts in structured JSON format
 
-### Day 4: Django Dashboard (Web Interface)
+### Day 4: Enhanced Django Dashboard (Web Interface)
 
 - Built a web-based dashboard using Django
-- Displays detected attacks in a structured table
+- **Live Updating**: Real-time monitoring with 5-second auto-refresh
+- **Security Analytics**: Total alerts counter and attack type breakdown
+- **Premium UI**: Modern dark-mode interface with Glassmorphism and Inter typography
+- Displays detected attacks in a structured, searchable table
 - Reads alerts from log file and presents them visually
-- Allows monitoring of network threats via browser
 
 ---
 
 ## How It Works
 
 1. The system captures packets using Scapy
-2. Extracts:
-   - Source IP
-   - Protocol (TCP/IP)
-
-3. Stores timestamps of incoming packets
+2. Extracts source IP and protocol information
+3. Tracks connection frequency and port access patterns
 4. Detects:
    - Port scanning behavior
    - Brute-force attempts
-
-5. Logs suspicious activity in JSON format
-6. Django dashboard reads logs and displays alerts
+5. Logs suspicious activity in structured JSON format
+6. Django dashboard parses logs, calculates real-time statistics, and displays them on a premium web interface
 
 ---
 
 ## Tech Stack
 
-- Python
-- Scapy
-- Django
-- JSON
-- Linux (WSL / Ubuntu recommended)
+- **Backend**: Python, Scapy
+- **Frontend**: Django, HTML5, CSS3 (Modern UI)
+- **Data**: JSON Log Storage
+- **Typography**: Google Fonts (Inter)
 
 ---
 
@@ -178,10 +175,9 @@ Or:
 
 ## Future Improvements
 
-- Real-time auto-refresh dashboard
-- Graphs and attack visualization
-- Database integration (SQLite/PostgreSQL)
+- Database integration (SQLite/PostgreSQL) for historical analysis
 - Machine learning-based anomaly detection
 - Alert notifications (email or SMS)
+- Network visualization maps
 
 ---
