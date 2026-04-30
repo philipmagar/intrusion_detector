@@ -7,43 +7,14 @@ It monitors network traffic, detects suspicious activities such as port scanning
 
 ---
 
-## Features
-
-### Day 1: Packet Sniffer
-
-- Captures live network traffic using Scapy
-- Displays packet summaries in real-time
-- Works at network level (IP + TCP packets)
-
-### Day 2: Port Scan Detection
-
-- Tracks activity of each IP address
-- Detects abnormal behavior (multiple requests in short time)
-- Raises alert for possible port scanning
-- Logs suspicious activity
-
-### Day 3: Brute-Force Attack Detection
-
-- Monitors repeated connection attempts from same IP
-- Detects abnormal connection frequency
-- Flags potential brute-force behavior
-- Logs alerts in structured JSON format
-
-### Day 4: Enhanced Django Dashboard (Web Interface)
-
-- Built a web-based dashboard using Django
-- **Live Updating**: Real-time monitoring with 5-second auto-refresh
-- **Security Analytics**: Total alerts counter and attack type breakdown
-- **Premium UI**: Modern dark-mode interface with Glassmorphism and Inter typography
-- Displays detected attacks in a structured, searchable table
-- Reads alerts from log file and presents them visually
-
-### Day 5: Advanced Threat Analytics & Visualization
-
-- **Interactive Charts**: Integrated Chart.js for real-time attack distribution over time.
-- **Threat Analytics**: Added top threat actors list and doughnut charts for risk breakdown.
-- **"Today" Filtering**: Automatically filters metrics and charts to show data for the current day.
-- **Live Counters**: Extended real-time badges for unique attacker IPs and daily alert counts.
+- **Core IDS Engine**: Captures live network traffic (IP + TCP) at the network level using Scapy.
+- **Port Scan Detection**: Tracks connection frequencies per IP and flags abnormal multi-port behavior.
+- **Brute-Force Detection**: Monitors repeated connection attempts from single IPs and detects brute-force signatures.
+- **JSON Logging**: Persists all suspicious activities into a structured `alerts.json` log for analysis.
+- **Real-Time Web Dashboard**: A premium, web-based Django dashboard with a dark-mode, glassmorphism UI.
+- **Advanced Threat Analytics**: Interactive Chart.js visualizations mapping attack distributions and risk breakdowns.
+- **Live Monitoring**: 10-second auto-refreshing interface with live counters, unique IP tracking, and "today" specific filtering.
+- **Actionable Insights**: Generates searchable logs, top threat actor lists, and risk severity indicators.
 
 ---
 
@@ -169,17 +140,7 @@ Or:
 - Intrusion detection system design
 - Django web application development
 
----
 
-## Project Progress Summary
-
-- Day 1: Packet sniffing
-- Day 2: Port scan detection
-- Day 3: Brute-force detection
-- Day 4: Web dashboard integration
-- Day 5: Advanced threat analytics & visualization
-
----
 
 ## Future Improvements
 
