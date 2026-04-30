@@ -38,6 +38,13 @@ It monitors network traffic, detects suspicious activities such as port scanning
 - Displays detected attacks in a structured, searchable table
 - Reads alerts from log file and presents them visually
 
+### Day 5: Advanced Threat Analytics & Visualization
+
+- **Interactive Charts**: Integrated Chart.js for real-time attack distribution over time.
+- **Threat Analytics**: Added top threat actors list and doughnut charts for risk breakdown.
+- **"Today" Filtering**: Automatically filters metrics and charts to show data for the current day.
+- **Live Counters**: Extended real-time badges for unique attacker IPs and daily alert counts.
+
 ---
 
 ## How It Works
@@ -170,6 +177,7 @@ Or:
 - Day 2: Port scan detection
 - Day 3: Brute-force detection
 - Day 4: Web dashboard integration
+- Day 5: Advanced threat analytics & visualization
 
 ---
 
