@@ -18,7 +18,7 @@ def log_alert(ip, alert_type):
         "time": time.strftime("%Y-%m-%d %H:%M:%S")
     }
 
-    with open("alerts.json", "a") as f:
+    with open("alerts.jsonl", "a") as f:
         f.write(json.dumps(log_entry) + "\n")
 
 

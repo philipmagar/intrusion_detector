@@ -10,7 +10,7 @@ It monitors network traffic, detects suspicious activities such as port scanning
 - **Core IDS Engine**: Captures live network traffic (IP + TCP) at the network level using Scapy.
 - **Port Scan Detection**: Tracks connection frequencies per IP and flags abnormal multi-port behavior.
 - **Brute-Force Detection**: Monitors repeated connection attempts from single IPs and detects brute-force signatures.
-- **JSON Logging**: Persists all suspicious activities into a structured `alerts.json` log for analysis.
+- **JSON Logging**: Persists all suspicious activities into a structured `alerts.jsonl` log for analysis.
 - **Real-Time Web Dashboard**: A premium, web-based Django dashboard with a dark-mode, glassmorphism UI.
 - **Advanced Threat Analytics**: Interactive Chart.js visualizations mapping attack distributions and risk breakdowns.
 - **Live Monitoring**: 10-second auto-refreshing interface with live counters, unique IP tracking, and "today" specific filtering.
@@ -47,7 +47,7 @@ intrusion_detector/
  ├── dashboard/        # Django project
  ├── monitor/          # Django app
  ├── sniffer.py        # IDS core logic
- ├── alerts.json       # Generated alerts
+ ├── alerts.jsonl      # Generated alerts
  ├── sample_alerts.json # Example logs (optional)
  ├── requirements.txt
  ├── README.md

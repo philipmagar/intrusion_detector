@@ -51,7 +51,6 @@
             font-weight: 700;
             margin: 0;
             background: linear-gradient(to right, #0ea5e9, #6366f1);
-            -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.02em;
         }
@@ -209,6 +208,9 @@
         .ip-text { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
         .time-text { color: var(--text-secondary); }
 
+        .severity-high { color: var(--danger-color); font-weight: 700; }
+        .severity-med { color: var(--warning-color); font-weight: 700; }
+
     </style>
 </head>
 <body>
@@ -291,7 +293,7 @@
                             <td><span class="ip-text">{{ alert.ip }}</span></td>
                             <td><span class="badge {% if 'Force' in alert.type or 'DDoS' in alert.type %}badge-danger{% else %}badge-warning{% endif %}">{{ alert.type }}</span></td>
                             <td><span class="time-text">{{ alert.time }}</span></td>
-                            <td><span style="color: {% if 'Force' in alert.type or 'DDoS' in alert.type %}var(--danger-color){% else %}var(--warning-color){% endif %}; font-weight: 700;">● High</span></td>
+                            <td><span class="{% if 'Force' in alert.type or 'DDoS' in alert.type %}severity-high{% else %}severity-med{% endif %}">● High</span></td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -304,7 +306,12 @@
         </div>
     </div>
 
+    <script id="hourly-data" type="application/json">{{ hourly_counts|safe }}</script>
+    <script id="breakdown-data" type="application/json">{{ attack_breakdown|safe }}</script>
     <script>
+        const hourlyData = JSON.parse(document.getElementById('hourly-data').textContent);
+        const breakdownDataJSON = JSON.parse(document.getElementById('breakdown-data').textContent);
+
         // Line Chart for Hourly Distribution
         const ctx = document.getElementById('attackChart').getContext('2d');
         new Chart(ctx, {
@@ -313,7 +320,7 @@
                 labels: Array.from({length: 24}, (_, i) => `${i}:00`),
                 datasets: [{
                     label: 'Attacks per Hour',
-                    data: {{ hourly_counts|safe }},
+                    data: hourlyData,
                     borderColor: '#0ea5e9',
                     backgroundColor: 'rgba(14, 165, 233, 0.1)',
                     borderWidth: 3,
@@ -343,7 +350,7 @@
 
         // Pie Chart for Attack Breakdown
         const pieCtx = document.getElementById('typePieChart').getContext('2d');
-        const breakdownData = {{ attack_breakdown|safe }};
+        const breakdownData = breakdownDataJSON;
         new Chart(pieCtx, {
             type: 'doughnut',
             data: {

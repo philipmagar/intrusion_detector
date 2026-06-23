@@ -6,7 +6,7 @@ from datetime import datetime
 
 def home(request):
     alerts = []
-    alerts_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "alerts.json")
+    alerts_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "alerts.jsonl")
     
     today_str = datetime.now().strftime("%Y-%m-%d")
     
