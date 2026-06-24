@@ -1,7 +1,7 @@
 import json
-from scapy.all import sniff, IP, TCP
 from collections import defaultdict
 import time
+import random
 
 # Store IP activity
 ip_activity = defaultdict(list)
@@ -51,6 +51,17 @@ def process_packet(packet):
         print(packet.summary())
 
 
-print("Starting IDS...")
+print("Starting Mock IDS... (Generating Fake Traffic)")
 
-sniff(prn=process_packet, store=False)
+ips = ["192.168.1.10", "10.0.0.5", "192.168.1.15", "172.16.0.22", "192.168.1.50"]
+types = ["Port Scan", "Brute Force", "SQL Injection", "DDoS Attempt", "Unauthorized Access"]
+
+try:
+    while True:
+        target_ip = random.choice(ips)
+        attack_type = random.choice(types)
+        print(f"[MOCK ALERT] Detected {attack_type} from {target_ip}")
+        log_alert(target_ip, attack_type)
+        time.sleep(random.uniform(2.0, 5.0))
+except KeyboardInterrupt:
+    print("\nStopping Mock IDS.")
