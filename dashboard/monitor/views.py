@@ -23,32 +23,34 @@ def home(request):
     except Exception:
         pass
 
-    # Filtering for today
-    today_alerts = [a for a in alerts if a['time'].startswith(today_str)]
+    # Filtering for today safely
+    today_alerts = [a for a in alerts if isinstance(a, dict) and str(a.get('time', '')).startswith(today_str)]
     
     # Analytics
     total_alerts = len(alerts)
     today_count = len(today_alerts)
     
     # Attack Breakdown (All time)
-    attack_types = [alert['type'] for alert in alerts]
+    attack_types = [alert.get('attack_type', alert.get('type', 'Unknown')) for alert in alerts if isinstance(alert, dict)]
     attack_breakdown = dict(Counter(attack_types))
     
     # Hourly breakdown for today's chart
     hourly_counts = [0] * 24
     for alert in today_alerts:
         try:
-            hour = int(alert['time'].split(' ')[1].split(':')[0])
-            hourly_counts[hour] += 1
+            time_str = str(alert.get('time', ''))
+            hour = int(time_str.split(' ')[1].split(':')[0])
+            if 0 <= hour < 24:
+                hourly_counts[hour] += 1
         except (IndexError, ValueError):
             continue
             
     # Top Attacking IPs
-    ip_counts = Counter([alert['ip'] for alert in alerts])
+    ip_counts = Counter([alert.get('src_ip', alert.get('ip', 'UNKNOWN')) for alert in alerts if isinstance(alert, dict)])
     top_ips = dict(ip_counts.most_common(5))
     
     # Unique IPs Today
-    unique_ips_today = len(set([alert['ip'] for alert in today_alerts]))
+    unique_ips_today = len(set([alert.get('src_ip', alert.get('ip', 'UNKNOWN')) for alert in today_alerts if isinstance(alert, dict)]))
 
     context = {
         "alerts": alerts[::-1][:15],  # Latest 15 alerts

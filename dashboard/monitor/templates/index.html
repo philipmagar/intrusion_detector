@@ -187,7 +187,7 @@
     <div class="container">
         <header>
             <h1>Network Traffic Monitor</h1>
-            <p class="subtitle">Live intrusion detection events (auto-refreshing)</p>
+            <p class="subtitle">Live intrusion detection events</p>
         </header>
 
         <div class="stats-row">
@@ -213,7 +213,7 @@
                     <div class="log-ip">{{ alert.ip }}</div>
                     <div class="log-type">
                         <span
-                            class="badge {% if 'Force' in alert.type or 'DDoS' in alert.type %}badge-danger{% else %}badge-warning{% endif %}">
+                            class="badge {% if 'Force' in alert.type or 'Flood' in alert.type or 'SYN' in alert.type or 'Illegal' in alert.type or 'CRITICAL' in alert.severity %}badge-danger{% else %}badge-warning{% endif %}">
                             {{ alert.type }}
                         </span>
                     </div>
