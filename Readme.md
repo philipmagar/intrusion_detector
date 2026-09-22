@@ -1,118 +1,132 @@
-# Intrusion Detection System (IDS) with Django Dashboard
+# Modular Intrusion Detection System (IDS) with Real-Time Dashboard
 
 ## Overview
 
-This project is a real-time Intrusion Detection System (IDS) built using Python, Scapy, and Django. It monitors network traffic, detects suspicious activities such as port scanning and brute-force attacks, and displays alerts through a modern web-based dashboard.
+A high-performance, modular Intrusion Detection System (IDS) built with Python, Scapy, and Django. It normalizes network traffic into standardized security events, evaluates packets across specialized detection modules (port scans, SYN floods, traffic rate anomalies, brute-force patterns, and suspicious TCP flag evasions), persists alerts to local JSON/JSONL, maintains real-time in-memory tracking, and exports comprehensive session reports to JSON.
 
 ---
 
-## Features
-- **Core IDS Engine**: Captures live network traffic (IP + TCP) at the network level using Scapy.
-- **Port Scan Detection**: Tracks connection frequencies per IP and flags abnormal multi-port behavior.
-- **Brute-Force Detection**: Monitors repeated connection attempts from single IPs and detects brute-force signatures.
-- **JSON Logging**: Persists all suspicious activities into a structured `alerts.jsonl` log.
-- **Real-Time Web Dashboard**: A clean, minimalistic UI that automatically refreshes to show live threats.
-- **Cross-Platform Support**: Works seamlessly on both Linux and Windows operating systems.
+## Modular Detection Architecture
+
+The IDS employs decoupled, extensible detection modules located in [`detectors/`](file:///c:/Users/phili/OneDrive/Desktop/github%20project/vulnerabilityassestment/intrusion_detector/detectors/):
+
+| Detector Module | Target Attack Vector | Detection Heuristic & Rules | Severity |
+| :--- | :--- | :--- | :--- |
+| **Port Scan Detector** | Vertical Port Scan & Horizontal Sweep | Tracks unique destination ports per target (> 8 ports in 10s) and multi-host probing | `HIGH` / `MEDIUM` |
+| **SYN Flood Detector** | TCP SYN Flood DoS / DDoS | Monitors SYN burst rates (> 25 pps) and half-open SYN-to-ACK imbalance ratios | `CRITICAL` / `HIGH` |
+| **Rate Anomaly Detector** | Abnormal Connection Rates & Floods | Detects sudden PPS bursts (> 30 pps), ICMP Ping Floods, and UDP storms | `CRITICAL` / `HIGH` |
+| **Brute Force Detector** | Authentication & Credential Attacks | Detects rapid connection/auth bursts on SSH (22), RDP (3389), FTP (21), Telnet (23), DBs, and Web logins | `HIGH` / `MEDIUM` |
+| **Suspicious Traffic Detector** | Evasion & Malicious Flag Combos | Detects Xmas scans (`FIN+PSH+URG`), Null scans (`0 flags`), `SYN+FIN` illegal combos, FIN scans, and known C2 backdoor ports (4444, 31337, etc.) | `CRITICAL` / `HIGH` |
 
 ---
 
-## How It Works
+## Standardized Detection Result & Alert Schema
 
-1. The `sniffer.py` script captures network packets using Scapy (or generates mock data if real packet sniffing isn't configured).
-2. It tracks connection frequencies and port access patterns to detect anomalies.
-3. Suspicious activity is immediately logged in a structured JSON format (`alerts.jsonl`).
-4. The Django dashboard parses these logs, calculates real-time statistics, and visualizes them on a sleek web interface.
+Every detector emits a consistent `DetectionResult` structure with full contextual evidence:
+
+```json
+{
+  "ip": "192.168.1.100",
+  "type": "Port Scan (Vertical)",
+  "time": "2026-09-21 20:30:00",
+  "attack_type": "Port Scan (Vertical)",
+  "severity": "HIGH",
+  "confidence": 0.95,
+  "triggered_rule": "RULE_PORT_SCAN_VERTICAL_THRESHOLD",
+  "src_ip": "192.168.1.100",
+  "dst_ip": "10.0.0.1",
+  "src_port": 51234,
+  "dst_port": 80,
+  "protocol": "TCP",
+  "packet_size": 60,
+  "flags": "SYN",
+  "evidence": {
+    "src_ip": "192.168.1.100",
+    "dst_ip": "10.0.0.1",
+    "distinct_ports_count": 10,
+    "ports_targeted": [21, 22, 23, 25, 53, 80, 110, 143, 443, 8080],
+    "window_seconds": 10.0,
+    "packet_stats": {
+      "total_probes_in_window": 10,
+      "distinct_ports": 10,
+      "probe_rate_pps": 1.0,
+      "last_packet_size": 60,
+      "tcp_flags": "SYN"
+    },
+    "details": "Host 192.168.1.100 probed 10 distinct ports on 10.0.0.1 within 10.0s."
+  }
+}
+```
+
+---
+
+## Alert Storage & JSON Reporting
+
+- **Local JSONL Logging (`alerts.jsonl`)**: Persistent append-only JSON Lines stream containing all incident details, fully backwards-compatible with the Django dashboard.
+- **In-Memory Ring Buffer**: Thread-safe cache storing recent alerts for zero-latency dashboard queries and real-time monitoring.
+- **Structured JSON Scan Reports**: Automatically exports session summary reports (`scan_report_<timestamp>.json`) upon completion or graceful shutdown (`Ctrl+C`).
 
 ---
 
 ## Getting Started
 
-### Prerequisites
-- **Python 3.10+** installed on your system.
-- *(For Windows Users ONLY)*: If you want to capture live network packets, you **must** install [Npcap](https://npcap.com/#download) and check the "Install Npcap in WinPcap API-compatible Mode" box during installation. Without Npcap, Scapy cannot sniff packets on Windows.
+### 1. Prerequisites & Virtual Environment
+- **Python 3.10+**
+- *(Windows Only)*: [Npcap](https://npcap.com/#download) with WinPcap compatibility enabled for live packet sniffing.
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/YOUR_USERNAME/intrusion-detector.git
-cd intrusion-detector
-```
-
-### 2. Setup Virtual Environment
-It is highly recommended to use a virtual environment to avoid dependency conflicts.
-
-**For Linux / macOS:**
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-**For Windows:**
 ```powershell
-python -m venv venv_win
-.\venv_win\Scripts\activate
-```
+# Activate your virtual environment
+.\venv\Scripts\Activate.ps1
 
-### 3. Install Dependencies
-Once the virtual environment is activated, install the required packages:
-```bash
+# Install requirements
 pip install -r requirements.txt
 ```
 
----
+### 2. Running Unit Tests
+Validate all detector modules, alert persistence, and report exporting:
+```powershell
+python -m unittest test_detectors.py test_packet_parser.py
+```
 
-## Running the Application
+### 3. Running Example Attack Simulation
+Run the standalone demonstration script:
+```powershell
+python example_event_conversion.py
+```
 
-To run the full system, you will need to open **two separate terminal windows**. Ensure your virtual environment is activated in **both** terminals before proceeding.
-
-### Terminal 1: Start the Dashboard
-Navigate into the dashboard directory and run the server:
-```bash
-# Make sure you are in the root 'intrusion_detector' folder first
+### 4. Running the Live IDS Engine & Dashboard
+**Terminal 1: Start Dashboard**
+```powershell
 cd dashboard
-python manage.py migrate
 python manage.py runserver
 ```
-*The dashboard will be available at http://127.0.0.1:8000/ and refreshes automatically.*
 
-### Terminal 2: Start the IDS Sniffer
-In a new terminal window, activate your virtual environment, stay in the root directory, and run the sniffer:
-```bash
-# Linux / macOS (Requires root privileges for packet sniffing)
-sudo python sniffer.py
-
-# Windows (Run as Administrator)
+**Terminal 2: Start Sniffer / Attack Simulator**
+```powershell
 python sniffer.py
 ```
 
 ---
 
-## Testing the System
+## Project Structure
 
-To see the IDS in action, you can generate network traffic using:
-```bash
-ping google.com
 ```
-Or simply open multiple browser tabs and refresh pages rapidly to trigger connection anomaly alerts.
-
----
-
-## Example Alert Log (`alerts.jsonl`)
-
-```json
-{"ip": "192.168.1.10", "type": "Port Scan", "time": "2026-04-21 10:00:00"}
-{"ip": "192.168.1.15", "type": "Brute Force", "time": "2026-04-21 10:02:00"}
+intrusion_detector/
+├── detectors/
+│   ├── __init__.py               # Detector module exports
+│   ├── base.py                   # BaseDetector ABC & DetectionResult dataclass
+│   ├── port_scan.py              # Vertical & horizontal scan detection
+│   ├── syn_flood.py              # TCP SYN flood & half-open tracking
+│   ├── rate_anomaly.py           # Traffic burst, PPS spike, ICMP/UDP floods
+│   ├── brute_force.py            # SSH, RDP, FTP, DB password brute-force
+│   └── suspicious_traffic.py     # Xmas, Null, SYN+FIN scans, C2 ports
+├── alert_manager.py              # Local JSON logging, in-memory cache, JSON report exporter
+├── engine.py                     # Central IDS coordination pipeline
+├── packet_parser.py              # Scapy packet to SecurityEvent normalizer
+├── sniffer.py                    # Live sniffing & simulated attack engine
+├── example_event_conversion.py   # Demonstration script
+├── test_detectors.py             # Unit tests for all detectors & storage
+├── test_packet_parser.py         # Unit tests for packet parser
+├── alerts.jsonl                  # Local JSON alert log
+└── dashboard/                    # Django real-time monitoring dashboard
 ```
-
----
-
-## Tech Stack
-- **Backend**: Python, Scapy
-- **Frontend**: Django, HTML5, Vanilla CSS
-- **Database**: SQLite (Django Defaults) + JSON Log Storage
-
----
-
-## Future Improvements
-- Database integration (PostgreSQL) for deeper historical analysis.
-- Machine learning-based anomaly detection using scikit-learn.
-- Real-time alert notifications (Email / SMS / Webhooks).
