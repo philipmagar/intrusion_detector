@@ -7,10 +7,10 @@ and timestamp.
 """
 
 from dataclasses import dataclass, asdict
-from datetime import datetime, timezone
+from datetime import datetime
 import json
 import time
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Dict, Any, Union, Tuple
 
 try:
     from scapy.layers.inet import IP, TCP, UDP, ICMP
@@ -62,7 +62,7 @@ class SecurityEvent:
         return json.dumps(self.to_dict(), indent=indent)
 
 
-def parse_tcp_flags(flags_val) -> tuple[str, List[str]]:
+def parse_tcp_flags(flags_val) -> Tuple[str, List[str]]:
     """
     Parses TCP flags into a concise string and a list of standard flag names.
     e.g., 'SA' -> ('SYN+ACK', ['SYN', 'ACK']) or ('SA', ['SYN', 'ACK'])

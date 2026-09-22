@@ -96,11 +96,12 @@ class AlertManager:
             self._total_alerts_count += 1
 
         # 2. Append to Local JSONL File
-        try:
-            with open(self.log_file, "a", encoding="utf-8") as f:
-                f.write(json.dumps(alert_dict) + "\n")
-        except Exception as e:
-            print(f"[AlertManager ERROR] Failed to write to {self.log_file}: {e}")
+        if self.log_file:
+            try:
+                with open(self.log_file, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(alert_dict) + "\n")
+            except Exception as e:
+                print(f"[AlertManager ERROR] Failed to write to {self.log_file}: {e}")
 
         return alert_dict
 
